@@ -4,6 +4,8 @@
 > Impostor Game is a multiplayer game where every player receives a secret word… except for one: the Impostor. <br>
 > Through clues, deception, and deduction, players must uncover the impostor before they guess the actual word. <br>
 > Fast-paced, social, and perfect for playing with friends. <br>
+> <br>
+> This repository contains the complete infrastructure to deploy the ecosystem using Docker.<br>
 
 [![Angular 21](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular)](https://github.com/cesarhuesca-dev/impostor-game-front)
 [![NestJS 11](https://img.shields.io/badge/NestJS-11-E0234E?style=for-the-badge&logo=nestjs)](https://github.com/cesarhuesca-dev/impostor-game-back)
@@ -46,7 +48,7 @@ Each repository can be downloaded and implemented separately: <br>
 
 * 🌐 **[Frontend](https://github.com/cesarhuesca-dev/impostor-game-front):** Client-side SPA built with **Angular 21**.
 * ⚙️ **[Backend](https://github.com/cesarhuesca-dev/impostor-game-back):** Robust API and real-time game logic powered by **NestJS 11**.
-* 🏗️ **[Infrastructure](https://github.com/cesarhuesca-dev/impostor-game-infra):** Deployment configurations, Docker, and automation (Optional repository).
+* 🏗️ **[Infrastructure](https://github.com/cesarhuesca-dev/impostor-game-infra):** Docker, Nginx configuration and environment automation (optional).
 
 ---
 
@@ -75,18 +77,18 @@ Each repository can be downloaded and implemented separately: <br>
 
 ### Installation
 
-1. **Clone the repositories:**
+1. **Clone the repositories:**<br>
     ```bash
-    git clone [https://github.com/cesarhuesca-dev/impostor-game-back.git](https://github.com/cesarhuesca-dev/impostor-game-back.git)
-    git clone [https://github.com/cesarhuesca-dev/impostor-game-front.git](https://github.com/cesarhuesca-dev/impostor-game-front.git)
+    git clone --recurse-submodules https://github.com/cesarhuesca-dev/impostor-game-infra.git
     ```
 
-2. **Backend Setup:**
-
-    2.1. **Configure Backend .env**
+2. **Backend Setup:**<br>
+    2.1. **Configure Backend .env**<br>
+    Create a .env file in the root of the infra project:
     ```bash
       ENVIRONMENT= #environment mode-> (development o production)
       FALLBACK_LANGUAGE=en
+      NGINX_PORT=80
 
       DB_TYPE= # Database type -> (postgres or sqlite)
       DB_USER= # Database username
@@ -107,64 +109,29 @@ Each repository can be downloaded and implemented separately: <br>
       WORD_API=https://random-words-api.kushcreates.com/api
     ```
 
-    2.2. **Install packages and run**
+
+3. **Run the environment**<br>
+  This command will build frontend and backend, inject environment variables dynamically and start Nginx.
     ```bash
-      # In the backend directory, start the database (if using Postgres)
+      #Root project
       docker compose up -d --build
-
-      # Install dependencies
-      npm install
-
-      # For development mode:
-      npm run start:dev
-
-      # For production:
-      npm run build
-      npm run start:prod
-    ```
-
-3. **Frontend Setup:**
-
-    3.1. **Configure environment files** (`assets/environments/environment.ts`)
-      ```typescript
-          export const environment = {
-            production: true,
-            URL_GMAIL: 'mailto:cesarhuesca.dev@gmail.com',
-            URL_LINKEDIN: '[https://www.linkedin.com/in/cesarhuesca-dev/](https://www.linkedin.com/in/cesarhuesca-dev/)',
-            URL_GITHUB: '[https://github.com/cesarhuesca-dev](https://github.com/cesarhuesca-dev)',
-            URL_DISCORD: '[https://discord.com/users/rayoces_7029](https://discord.com/users/rayoces_7029)',
-            URL_API: 'http://localhost:3000/api', // Backend API URL
-            URL_WS: 'http://localhost:3000',      // Real-time connection URL
-          };
       ```
-
-    3.2. **Install packages and run**
-    ```bash
-      # Install dependencies
-      npm install
-
-      # For development:
-      npm run start
-
-      # For production build:
-      npm run build
-    ```
-
-    Open your browser at the local URL and start playing!
-
 ---
 
 ## ✨ Key Features
 
-- ⚡ **Real-Time:** Seamless gameplay experience powered by WebSockets.
-- 🌍 **Multi-language:** Support for English, Spanish, German, French, Italian, and Portuguese.
-- 🎨 **Modern Design:** Minimalist and responsive dark interface.
-- 🧽 **Cleaning:** From time to time, the database is cleaned to avoid trash.
-- 🎥 **Overlay:** Template for broadcasts, menu deactivatable with double click on the screen.
+*  ⚙️ **Runtime Injection:** Frontend detects URL changes from .env without rebuilding Docker images (via assets/env.js).
+*  🌐 **Dynamic SEO:** Meta tags in index.html update automatically at container startup.
+*  🛡️ **Reverse Proxy:** Nginx handles routing and prevents SPA 404 errors.
+*  ⚡ **Real-time:** Smooth gameplay powered by WebSockets.
+*  🌍 **Multi-language:** English, Spanish, German, French, Italian and Portuguese.
+*  🎨 **Modern UI:** Clean and responsive design.
+*  🧽 **Auto Cleanup:** Periodic database cleanup to avoid unused data.
+*  🎥 **Overlay:** Streaming template with toggleable UI.
 ---
 
 # 🙋 Contact
 
-**[<span style="font-size: xx-large; align-self: center;">📩</span>](mailto:cesarhuesca.dev@gmail.com)**
-**[![large-filled-linkedin](https://github.com/CLorant/readme-social-icons/raw/main/large/filled/linkedin.svg)](https://www.linkedin.com/in/cesarhuesca-dev/)**
-**[![large-filled-github](https://github.com/CLorant/readme-social-icons/raw/main/large/filled/github.svg)](https://github.com/cesarhuesca-dev)**
+**[Email](mailto:cesarhuesca.dev@gmail.com)**
+**[LinkedIn](https://www.linkedin.com/in/cesarhuesca-dev/)**
+**[GitHub](https://github.com/cesarhuesca-dev)**

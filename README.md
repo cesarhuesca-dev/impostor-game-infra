@@ -5,6 +5,10 @@
 > Impostor Game es un juego multijugador en el que cada jugador recibe una palabra secreta… excepto uno, el impostor. <br>
 > A través de pistas, engaños y deducción, los jugadores deben descubrir al impostor, antes de que el impostor adivine la palabra real. <br>
 > Rápido, social y perfecto para jugar con amigos. <br>
+<br>
+
+> **Este repositorio contiene la infraestructura completa para desplegar el ecosistema usando Docker.**<br>
+
 
 [![Angular 21](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular)](https://github.com/cesarhuesca-dev/impostor-game-front)
 [![NestJS 11](https://img.shields.io/badge/NestJS-11-E0234E?style=for-the-badge&logo=nestjs)](https://github.com/cesarhuesca-dev/impostor-game-back)
@@ -47,7 +51,7 @@ Cada repositorio se puede descargar e implementar por separado:<br>
 
 * 🌐 **[Frontend](https://github.com/cesarhuesca-dev/impostor-game-front):** Aplicación cliente SPA construida con **Angular 21**.
 * ⚙️ **[Backend](https://github.com/cesarhuesca-dev/impostor-game-back):** API robusta y lógica de juego en tiempo real con **NestJS 11**.
-* 🏗️ **[Infraestructura](https://github.com/cesarhuesca-dev/impostor-game-infra):** Configuraciones de despliegue, Docker y automatización, este repositorio es opcional.
+* 🏗️ **[Infraestructura](https://github.com/cesarhuesca-dev/impostor-game-infra):** Configuración de Docker, Nginx y automatización de variables de entorno, este repositorio es opcional.
 
 ---
 
@@ -74,20 +78,21 @@ Cada repositorio se puede descargar e implementar por separado:<br>
 - Node.js (v20+ recomendado)
 - Docker (opcional para base de datos)
 
-### Instalación
+### Instalación y configuracion del repositorio de infra
 
 1.  **Clonar los repositorios:**
     ```bash
-    git clone [https://github.com/cesarhuesca-dev/impostor-game-back.git](https://github.com/cesarhuesca-dev/impostor-game-back.git)
-    git clone [https://github.com/cesarhuesca-dev/impostor-game-front.git](https://github.com/cesarhuesca-dev/impostor-game-front.git)
+    git clone --recurse-submodules https://github.com/cesarhuesca-dev/impostor-game-infra.git
     ```
 
-2.  **Configurar y levantar el Backend:**
+2.  **Configurar variables de entorno (.env):**
 
-    2.1. **Configurar Backend .env**
+    2.1. **Configurar Backend .env** <br>
+    Crea un archivo .env en la raíz de la carpeta infra basándote en la siguiente configuración
     ```bash
       ENVIRONMENT= #Tipo de entorno-> (development o production)
       FALLBACK_LANGUAGE=es
+      NGINX_PORT=80
 
       DB_TYPE= #Tipo de base de datos a utilizar -> (postgres o sqlite)
       DB_USER= #Nombre de usuario que usara la base de datos
@@ -108,68 +113,32 @@ Cada repositorio se puede descargar e implementar por separado:<br>
       WORD_API=https://random-words-api.kushcreates.com/api
     ```
 
-    2.2. **Instalar paquetes y levantar entornos**
+3. **Levantar entornos**<br>
+  Este comando compilará el frontend y backend, inyectará las variables de entorno dinámicamente y levantará el proxy Nginx.
     ```bash
-      #En la ruta de proyecto backend en entornos de locales primero levantar la base de datos
-      #Siguiente comando solo valido si la base de datos es postgres
+      #En la ruta de proyecto infra
       docker compose up -d --build
-
-      #Instalar paquetes y dependencias
-      npm install
-
-      #Segun necesidades, levantar en modo local siguiente comando:
-      npm run start:dev
-
-      #Segun necesidades, levantar en modo produccion siguiente comando y levantar con node el servidor
-      npm run build
-    ```
-
-3.  **Configurar y levantar el Frontend:**
-
-    3.1. **Configurar Frontend assets/environments/environment.ts o assets/environments/environment.development.ts**
-      ```bash
-          export const environment = {
-            production: true,
-            URL_GMAIL: 'mailto:cesarhuesca.dev@gmail.com',
-            URL_LINKEDIN: 'https://www.linkedin.com/in/cesarhuesca-dev/',
-            URL_GITHUB: 'https://github.com/cesarhuesca-dev',
-            URL_DISCORD: 'https://discord.com/users/rayoces_7029',
-            URL_API: 'http://localhost/api', #Url que se va a utilizar con la extension /api -> (http://localhost:3000/api)
-            URL_WS: 'http://localhost',  #Url que se va a utilizar para la conexion de tiempo real, solo url -> (http://localhost)
-          };
       ```
-
-    3.2. **Instalar paquetes y levantar entornos**
-    ```bash
-      #Instalar paquetes y dependencias
-      npm install
-
-      #Segun necesidades, levantar en modo local siguiente comando:
-      npm run start
-
-      #Segun necesidades, levantar en modo produccion siguiente comando y levantar con node el servidor
-      npm run build
-    ```
-
-    Accede a segun la url y ¡empieza a jugar!
-
 ---
 
 ## ✨ Características Principales
 
--   ⚡ **Tiempo Real:** Experiencia de juego fluida gracias a WebSockets.
--   🌍 **Multi-idioma:** Soporte a Inglés, Alemán, Francés, Italiano y Portugués.
--   🎨 **Diseño Moderno:** Interfaz
--   🧽 **Limpieza:** Cada cierto tiempo se hace limpieza de la base de datos para evitar basura.
--   🎥 **Overlay:** Plantilla para retransmisiones, menu desactivable con doble click en la pantalla.
+*  ⚙️ **Inyección en Runtime:** El frontend detecta cambios en las URLs del .env sin necesidad de recompilar la imagen de Docker (vía assets/env.js).
+*  🌐 **SEO Dinámico:** Los metatags del index.html se actualizan automáticamente al arrancar el contenedor.
+*  🛡️ **Proxy Inverso:** Nginx gestiona el tráfico y el enrutamiento de la SPA para evitar errores 404.
+*  ⚡ **Tiempo Real:** Experiencia de juego fluida gracias a WebSockets.
+*  🌍 **Multi-idioma:** Soporte a Inglés, Alemán, Francés, Italiano y Portugués.
+*  🎨 **Diseño Moderno:** Interfaz
+*  🧽 **Limpieza:** Cada cierto tiempo se hace limpieza de la base de datos para evitar basura.
+*  🎥 **Overlay:** Plantilla para retransmisiones, menu desactivable con doble click en la pantalla.
 
-
+---
 
 # 🙋 Contacto
 
-**[<span style="font-size: xx-large; align-self: center;">📩</span>](mailto:cesarhuesca.dev@gmail.com)**
-**[![large-filled-linkedin](https://github.com/CLorant/readme-social-icons/raw/main/large/filled/linkedin.svg)](https://www.linkedin.com/in/cesarhuesca-dev/)**
-**[![large-filled-github](https://github.com/CLorant/readme-social-icons/raw/main/large/filled/github.svg)](https://github.com/cesarhuesca-dev)**
+**[Email](mailto:cesarhuesca.dev@gmail.com)**
+**[LinkedIn](https://www.linkedin.com/in/cesarhuesca-dev/)**
+**[GitHub](https://github.com/cesarhuesca-dev)**
 
 
 ---
